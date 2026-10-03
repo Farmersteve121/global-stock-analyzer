@@ -82,13 +82,19 @@ async function api(path, opts) {
   console.log('[deploy] 获取 owners...');
   const owners = await api('/v1/owners');
   const arr = Array.isArray(owners.json) ? owners.json : [];
-  console.log('[deploy] owners: ' + arr.map((o) => o.type + ':' + o.id).join(', '));
-  const owner = arr.find((o) => o.type === 'user');
-  if (!owner) fail('未找到 user 类型 owner（HTTP ' + owners.status + '），请检查 Key 归属账户');
+  console.log('[deploy] owners: ' + arr.map((it) => { const o = (it && it.owner) ? it.owner : it; return o ? (o.type + ':' + o.id) : '?'; }).join(', '));
+  let ownerId = '';
+  for (const it of arr) {
+    const o = (it && it.owner) ? it.owner : it;
+    if (!o || !o.id) continue;
+    if (o.type === 'user') { ownerId = o.id; break; }
+    if (!ownerId) ownerId = o.id;
+  }
+  if (!ownerId) fail('无法从 owners 响应解析 owner id（HTTP ' + owners.status + '）：' + JSON.stringify(owners.json).slice(0, 300));
   const body = {
     type: 'web_service',
     name: SERVICE_NAME,
-    ownerId: owner.id,
+    ownerId: ownerId,
     repo: REPO,
     branch: BRANCH,
     runtime: 'node',
