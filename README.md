@@ -54,6 +54,12 @@
 
 方式二：Render 控制台 → New + → Blueprint → 连接 GitHub 选择本仓库 → 在环境变量页面填入 MONGODB_URI → Apply → 等待部署完成。
 
+方式三（全自动 API 部署）：在 Render 控制台 → Account Settings → API Keys 创建 Key 后，本地运行：
+
+    RENDER_API_KEY=rnd_你的Key MONGODB_URI=你的连接串 node scripts/deploy-render.js
+
+脚本会创建服务、等待上线并输出服务地址（MONGODB_URI 可省略，稍后在控制台补填）。
+
 ### 3. 验证
 
 - 访问 Render 分配的 https://xxx.onrender.com 即可看到网站
