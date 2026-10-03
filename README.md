@@ -58,6 +58,7 @@
 
 - 访问 Render 分配的 https://xxx.onrender.com 即可看到网站
 - 访问 https://xxx.onrender.com/api/health 应返回 {"ok":true,"db":"mongodb",...}，说明 Atlas 已连上
+- 一键冒烟测试：node scripts/smoke.js https://xxx.onrender.com --require-mongo（全部 PASS 即部署成功）
 - 免费实例闲置约 15 分钟会休眠，首次唤醒需 30~60 秒
 
 ## 环境变量
