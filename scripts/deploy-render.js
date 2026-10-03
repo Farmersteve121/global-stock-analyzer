@@ -19,12 +19,15 @@ function keyFromClipboard() {
 }
 function askKeyInteractive() {
   const readline = require('node:readline');
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   return new Promise((resolve) => {
+    let done = false;
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
     rl.question('[deploy] 剪贴板中没有 Key，请粘贴 Render API Key（rnd_ 开头，需完整复制）: ', (ans) => {
+      done = true;
       rl.close();
       resolve(String(ans || '').trim());
     });
+    rl.on('close', () => { if (!done) resolve(''); });
   });
 }
 const MONGO_URI = process.env.MONGODB_URI || '';
