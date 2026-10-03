@@ -97,12 +97,17 @@ async function api(path, opts) {
     ownerId: ownerId,
     repo: REPO,
     branch: BRANCH,
-    runtime: 'node',
-    buildCommand: 'npm install',
-    startCommand: 'node server.js',
-    healthCheckPath: '/api/health',
-    plan: 'free',
-    region: REGION,
+    autoDeploy: 'yes',
+    serviceDetails: {
+      runtime: 'node',
+      plan: 'free',
+      region: REGION,
+      envSpecificDetails: {
+        buildCommand: 'npm install',
+        startCommand: 'node server.js',
+      },
+      healthCheckPath: '/api/health',
+    },
     envVars: [{ key: 'NODE_VERSION', value: '22' }],
   };
   if (MONGO_URI) body.envVars.push({ key: 'MONGODB_URI', value: MONGO_URI });
