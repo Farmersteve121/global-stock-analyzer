@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个股分析 · 环球股票分析</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><a class="brand-link" href="/"><span class="logo">📈</span>环球股票分析</a></div>
+  <nav><a href="/">返回总览</a></nav>
+</header>
+<main class="container">
+  <div id="stockHead" class="stock-head card">
+    <div class="sh-left">
+      <div class="sh-title"><span id="stName">--</span><span class="badge" id="stMarket">--</span><span class="badge" id="stStatus"></span></div>
+      <div class="sh-code mono" id="stCode">--</div>
+    </div>
+    <div class="sh-price">
+      <div id="stPrice" class="big-price">--</div>
+      <div id="stChg" class="chg-line"></div>
+    </div>
+    <div class="sh-actions">
+      <button id="favBtn" class="btn">☆ 加自选</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <section class="card chart-card">
+      <h3>日K走势与指标<span class="hint" id="chartHint"></span></h3>
+      <div id="chart" style="height: 620px;"></div>
+    </section>
+    <aside class="side">
+      <div class="card pred-card">
+        <h3>AI 涨跌预测<span class="hint">下一交易日</span></h3>
+        <div id="predBody"><div class="empty">加载中...</div></div>
+      </div>
+      <div class="card stat-card">
+        <h3>关键指标</h3>
+        <div id="indBody" class="ind-list"></div>
+      </div>
+    </aside>
+  </div>
+</main>
+<footer class="footer">
+  数据来源：Yahoo Finance / 腾讯行情（行情或有延迟）。<br>
+  本站涨跌预测基于历史技术指标统计模型，仅供研究参考，不构成任何投资建议。股市有风险，投资需谨慎。
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/stock.js"></script>
+</body>
+</html>

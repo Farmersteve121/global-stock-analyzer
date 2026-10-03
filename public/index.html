@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>环球股票分析 · 深市 / 沪市 / 港股 / 美股</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="logo">📈</span>环球股票分析<span class="sub">GlobalStock · 深/沪/港/美</span></div>
+  <nav><a href="/">大盘总览</a><a href="#favorites">我的自选</a></nav>
+</header>
+<main class="container">
+  <section class="search-box">
+    <div class="search-row">
+      <input id="q" type="text" placeholder="搜索股票代码或名称，如：600519 / 茅台 / 00700 / AAPL" autocomplete="off">
+      <select id="marketSel">
+        <option value="">全部市场</option>
+        <option value="sh">沪市</option>
+        <option value="sz">深市</option>
+        <option value="hk">港股</option>
+        <option value="us">美股</option>
+      </select>
+      <button id="searchBtn" class="btn">搜索</button>
+    </div>
+    <div id="searchResults" class="search-results hidden"></div>
+  </section>
+
+  <section>
+    <h2 class="section-title">全球指数</h2>
+    <div id="indices" class="indices-grid"><div class="empty">加载中...</div></div>
+  </section>
+
+  <section>
+    <h2 class="section-title">热门股票<span class="hint" id="marketStatusHint"></span></h2>
+    <div class="tabs" id="marketTabs">
+      <button data-m="sh" class="tab active">沪市</button>
+      <button data-m="sz" class="tab">深市</button>
+      <button data-m="hk" class="tab">港股</button>
+      <button data-m="us" class="tab">美股</button>
+    </div>
+    <div class="table-wrap">
+      <table id="hotTable">
+        <thead><tr><th>代码</th><th>名称</th><th>最新价</th><th>涨跌幅</th><th>涨跌额</th><th>成交额(万)</th><th>市盈率</th><th>操作</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="favorites">
+    <h2 class="section-title">我的自选</h2>
+    <div id="favList" class="fav-list"><div class="empty">加载中...</div></div>
+  </section>
+</main>
+<footer class="footer">
+  数据来源：Yahoo Finance / 腾讯行情（行情或有延迟）。<br>
+  本站涨跌预测基于历史技术指标统计模型，仅供研究参考，不构成任何投资建议。股市有风险，投资需谨慎。
+</footer>
+<script src="/js/common.js"></script>
+<script src="/js/index.js"></script>
+</body>
+</html>

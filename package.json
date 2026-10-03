@@ -1,0 +1,17 @@
+{
+  "name": "global-stock-analyzer",
+  "version": "1.0.0",
+  "description": "环球股票分析：深市 / 沪市 / 港股 / 美股行情与涨跌预测",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongodb": "^6.8.0"
+  }
+}
