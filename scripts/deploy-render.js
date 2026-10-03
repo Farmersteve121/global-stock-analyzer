@@ -14,7 +14,11 @@ const REPO = process.env.REPO || 'https://github.com/Farmersteve121/global-stock
 const BRANCH = process.env.BRANCH || 'main';
 const REGION = process.env.RENDER_REGION || 'singapore';
 
-function fail(msg) { console.error('[deploy] 失败: ' + msg); process.exit(1); }
+function fail(msg) {
+  console.error('[deploy] 失败: ' + msg);
+  process.exitCode = 1;
+  throw new Error('FAILED');
+}
 
 async function api(path, opts) {
   opts = opts || {};
@@ -36,7 +40,7 @@ async function api(path, opts) {
     if (exist && exist.service) {
       const d = exist.service.serviceDetails || {};
       console.log('[deploy] 已存在服务，状态=' + (d.status || '?') + (d.url ? '，地址=' + d.url : ''));
-      if (d.url) { console.log('URL=' + d.url); process.exit(0); }
+      if (d.url) { console.log('URL=' + d.url); return; }
     }
   }
   console.log('[deploy] 获取 owners...');
@@ -73,8 +77,11 @@ async function api(path, opts) {
     const det = svc.serviceDetails || {};
     const status = det.status || '?';
     console.log('[deploy] ' + String(i + 1).padStart(2, '0') + 'x15s 状态=' + status + (det.url ? ' url=' + det.url : ''));
-    if (status === 'live') { console.log('URL=' + det.url); console.log('[deploy] 完成。验证: node scripts/smoke.js ' + det.url + ' --require-mongo'); process.exit(0); }
+    if (status === 'live') { console.log('URL=' + det.url); console.log('[deploy] 完成。验证: node scripts/smoke.js ' + det.url + ' --require-mongo'); return; }
     if (['build_failed', 'deploy_failed', 'crashed'].includes(status)) fail('部署失败: ' + status);
   }
   fail('10 分钟内未上线，请稍后重跑本脚本（会复用已创建的服务）或到 Render 控制台查看');
-})().catch((e) => fail(String(e && e.message || e)));
+})().catch((e) => {
+  const m = String((e && e.message) || e);
+  if (m !== 'FAILED') { console.error('[deploy] 失败: ' + m); process.exitCode = 1; }
+});
