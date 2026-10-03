@@ -10,12 +10,22 @@
 const { execSync } = require('node:child_process');
 
 let KEY = process.env.RENDER_API_KEY || '';
-if (!KEY) {
+function keyFromClipboard() {
   try {
-    const clip = String(execSync('powershell -NoProfile -STA -Command "try { (Get-Clipboard -Raw) } catch { }"', { encoding: 'utf8', timeout: 15000, windowsHide: true }) || '')
-      .split(/\r?\n/)[0].trim();
-    if (/^rnd_[A-Za-z0-9]{20,}$/.test(clip)) KEY = clip;
-  } catch (e) {}
+    const clip = String(execSync('powershell -NoProfile -STA -Command "try { (Get-Clipboard -Raw) } catch { }"', { encoding: 'utf8', timeout: 15000, windowsHide: true }) || '');
+    const m = clip.match(/rnd_[A-Za-z0-9]{16,}/);
+    return m ? m[0] : '';
+  } catch (e) { return ''; }
+}
+function askKeyInteractive() {
+  const readline = require('node:readline');
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    rl.question('[deploy] 剪贴板中没有 Key，请粘贴 Render API Key（rnd_ 开头，需完整复制）: ', (ans) => {
+      rl.close();
+      resolve(String(ans || '').trim());
+    });
+  });
 }
 const MONGO_URI = process.env.MONGODB_URI || '';
 const SERVICE_NAME = process.env.SERVICE_NAME || 'global-stock-analyzer';
@@ -52,7 +62,9 @@ async function api(path, opts) {
 }
 
 (async () => {
-  if (!KEY || KEY.indexOf('rnd_') !== 0) fail('未找到有效的 API Key：请先把 Render API Key（rnd_ 开头）复制到剪贴板，或用环境变量 RENDER_API_KEY 传入');
+  if (!KEY || KEY.indexOf('rnd_') !== 0) KEY = keyFromClipboard();
+  if (!KEY || KEY.indexOf('rnd_') !== 0) KEY = await askKeyInteractive();
+  if (!KEY || KEY.indexOf('rnd_') !== 0) fail('未找到有效的 API Key（rnd_ 开头）。请到 Render 控制台 Account Settings → API Keys 完整复制 Key 后重试');
   console.log('[deploy] 检查是否已有同名服务...');
   const list = await api('/v1/services?limit=20&name=' + encodeURIComponent(SERVICE_NAME));
   if (list.status === 401) fail('API Key 无效（HTTP 401），请到 Render → Account Settings → API Keys 重新复制完整 Key');
