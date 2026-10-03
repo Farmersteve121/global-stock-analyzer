@@ -7,6 +7,8 @@
 //   MONGODB_URI     可选，MongoDB Atlas 连接串，提供则一并配置
 //   SERVICE_NAME    可选，默认 global-stock-analyzer
 //   RENDER_REGION   可选，默认 singapore
+const { execSync } = require('node:child_process');
+
 const KEY = process.env.RENDER_API_KEY || '';
 const MONGO_URI = process.env.MONGODB_URI || '';
 const SERVICE_NAME = process.env.SERVICE_NAME || 'global-stock-analyzer';
@@ -18,6 +20,18 @@ function fail(msg) {
   console.error('[deploy] 失败: ' + msg);
   process.exitCode = 1;
   throw new Error('FAILED');
+}
+
+function runSmoke(url) {
+  console.log('[deploy] 服务已上线，执行冒烟验证...');
+  const extra = MONGO_URI ? ' --require-mongo' : '';
+  try {
+    execSync('node scripts/smoke.js ' + url + extra, { stdio: 'inherit' });
+    console.log('[deploy] 冒烟验证全部通过！部署完成。');
+  } catch (e) {
+    console.error('[deploy] 冒烟验证未通过，请查看上方输出');
+    process.exitCode = 1;
+  }
 }
 
 async function api(path, opts) {
@@ -40,7 +54,7 @@ async function api(path, opts) {
     if (exist && exist.service) {
       const d = exist.service.serviceDetails || {};
       console.log('[deploy] 已存在服务，状态=' + (d.status || '?') + (d.url ? '，地址=' + d.url : ''));
-      if (d.url) { console.log('URL=' + d.url); return; }
+      if (d.url) { console.log('URL=' + d.url); if (d.status === 'live') runSmoke(d.url); return; }
     }
   }
   console.log('[deploy] 获取 owners...');
@@ -77,7 +91,7 @@ async function api(path, opts) {
     const det = svc.serviceDetails || {};
     const status = det.status || '?';
     console.log('[deploy] ' + String(i + 1).padStart(2, '0') + 'x15s 状态=' + status + (det.url ? ' url=' + det.url : ''));
-    if (status === 'live') { console.log('URL=' + det.url); console.log('[deploy] 完成。验证: node scripts/smoke.js ' + det.url + ' --require-mongo'); return; }
+    if (status === 'live') { console.log('URL=' + det.url); runSmoke(det.url); return; }
     if (['build_failed', 'deploy_failed', 'crashed'].includes(status)) fail('部署失败: ' + status);
   }
   fail('10 分钟内未上线，请稍后重跑本脚本（会复用已创建的服务）或到 Render 控制台查看');
