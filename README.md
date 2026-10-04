@@ -2,6 +2,24 @@
 
 深市 / 沪市 / 港股 / 美股 行情与涨跌预测网站。Node.js + Express + MongoDB Atlas + ECharts，部署于 Render（免费套餐）。
 
+## 在线访问
+
+- 站点首页：https://global-stock-analyzer.onrender.com
+- 健康检查：https://global-stock-analyzer.onrender.com/api/health
+- 源码仓库：https://github.com/Farmersteve121/global-stock-analyzer
+
+> Render 免费实例闲置约 15 分钟会休眠，休眠后首次访问需 30~60 秒冷启动唤醒。
+
+### 当前部署信息
+
+| 项目 | 值 |
+| --- | --- |
+| Render 服务名 / ID | `global-stock-analyzer` / `srv-db145jvavr4c73a648og` |
+| 区域 / 套餐 | singapore / free |
+| 仓库与分支 | `Farmersteve121/global-stock-analyzer` @ `main`（autoDeploy 已开启） |
+| MongoDB Atlas | 集群 `english-website`（`wuv98z3`），数据库 `stock_analyzer` |
+| 集合与索引 | `cache`（`updatedAt` TTL 3600s）、`favorites`（`clientId+symbol` 唯一索引） |
+
 ## 功能特性
 
 - 全球指数行情：上证指数、深证成指、创业板指、科创50、恒生指数、恒生科技指数、道琼斯、标普500、纳斯达克

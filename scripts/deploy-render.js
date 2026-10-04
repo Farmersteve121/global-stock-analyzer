@@ -120,7 +120,9 @@ async function api(path, opts) {
   for (let i = 0; i < 40; i++) {
     await new Promise((res) => setTimeout(res, 15000));
     const st = await api('/v1/services/' + svcId);
-    const svc = (st.json && st.json.service) || {};
+    // 注意：GET /v1/services/{id} 返回的是扁平对象（serviceDetails 在顶层），
+    // 而列表接口 GET /v1/services 返回的是 { service: {...} } 包装结构，两者不同。
+    const svc = (st.json && (st.json.service || st.json)) || {};
     const det = svc.serviceDetails || {};
     const status = det.status || '?';
     console.log('[deploy] ' + String(i + 1).padStart(2, '0') + 'x15s 状态=' + status + (det.url ? ' url=' + det.url : ''));
