@@ -75,8 +75,19 @@ async function api(path, opts) {
     const exist = list.json.find((s) => s.service && s.service.name === SERVICE_NAME);
     if (exist && exist.service) {
       const d = exist.service.serviceDetails || {};
-      console.log('[deploy] 已存在服务，状态=' + (d.status || '?') + (d.url ? '，地址=' + d.url : ''));
-      if (d.url) { console.log('URL=' + d.url); if (d.status === 'live') runSmoke(d.url); return; }
+      const sid = exist.service.id;
+      // 列表接口的 serviceDetails 不含 status，必须查最近一次部署才能判断是否在线
+      let status = '?';
+      try {
+        const deps = await api('/v1/services/' + sid + '/deploys?limit=1');
+        const first = Array.isArray(deps.json) ? deps.json[0] : null;
+        status = (first && first.deploy && first.deploy.status) || '?';
+      } catch (e) {}
+      console.log('[deploy] 已存在服务 id=' + sid + '，最近部署状态=' + status + (d.url ? '，地址=' + d.url : ''));
+      if (d.url) console.log('URL=' + d.url);
+      if (d.url && status === 'live') { runSmoke(d.url); return; }
+      console.log('[deploy] 服务已存在，跳过重复创建。若需更新代码：push 到 GitHub 后由 autoDeploy 自动重建。');
+      return;
     }
   }
   console.log('[deploy] 获取 owners...');
