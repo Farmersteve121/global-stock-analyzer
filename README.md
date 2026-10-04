@@ -17,7 +17,7 @@
 | Render 服务名 / ID | `global-stock-analyzer` / `srv-db145jvavr4c73a648og` |
 | 区域 / 套餐 | singapore / free |
 | 仓库与分支 | `Farmersteve121/global-stock-analyzer` @ `main`（autoDeploy 已开启） |
-| MongoDB Atlas | 集群 `english-website`（`wuv98z3`），数据库 `stock_analyzer` |
+| MongoDB Atlas | 免费 M0 集群，数据库 `stock_analyzer`（连接串仅通过 Render 环境变量 `MONGODB_URI` 注入，不入库） |
 | 集合与索引 | `cache`（`updatedAt` TTL 3600s）、`favorites`（`clientId+symbol` 唯一索引） |
 
 ## 功能特性
